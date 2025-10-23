@@ -1,0 +1,285 @@
+<!-- index.html (Final Version with Embedded SVG Logo) -->
+<!DOCTYPE html>
+<html lang="en" class="h-screen bg-gray-900">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codexa - Modern LaTeX Compiler</title>
+
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 'sans': ['Inter', 'sans-serif'], },
+                    colors: { 'dark': '#0d1117', 'darker': '#010409', 'light': '#c9d1d9', 'accent': '#f97316', }
+                }
+            }
+        }
+    </script>
+
+    <!-- CodeMirror CSS (Material Ocean Theme) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/material-ocean.min.css">
+
+    <!-- CodeMirror JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/stex/stex.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .CodeMirror {
+            height: 100%;
+            font-size: 15px;
+            background-color: #0d1117;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1c2128;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #30363d;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #484f58;
+        }
+    </style>
+</head>
+
+<body class="text-light h-screen flex flex-col overflow-hidden">
+
+    <!-- Responsive Header with Embedded SVG Logo -->
+    <header
+        class="bg-darker border-b border-gray-800 px-4 py-2 sm:px-6 sm:py-3 flex flex-col sm:flex-row justify-between items-center flex-shrink-0 gap-2">
+        <div class="flex items-center space-x-2 sm:space-x-3">
+            <!-- ======================================================= -->
+            <!--  NEW EMBEDDED SVG LOGO - NO EXTERNAL FILE NEEDED      -->
+            <!-- ======================================================= -->
+            <svg class="w-8 h-8 sm:w-9 sm:h-9 flex-shrink-0 text-orange-400" fill="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+                <path d="M8 12L16 12M8 16L13 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                <path d="M10.5 5.5L10.5 8.5M8.5 7L12.5 7" stroke="currentColor" stroke-width="1.5"
+                    stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <h1 class="text-lg sm:text-xl font-semibold text-orange-400">Codexa</h1>
+        </div>
+        <div class="flex items-center space-x-2 sm:space-x-3 flex-wrap justify-center">
+            <button id="compileBtn"
+                class="flex items-center space-x-2 bg-accent hover:bg-orange-500 text-dark font-semibold py-2 px-4 sm:px-5 rounded-md transition-all duration-200 ease-in-out transform hover:scale-105 w-full sm:w-auto justify-center">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                </svg>
+                <span>Compile</span>
+                <svg id="compileSpinner" class="animate-spin h-5 w-5 text-dark" style="display: none;"
+                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                    </path>
+                </svg>
+            </button>
+
+            <!-- Download Buttons for PDF and DOCX -->
+            <button id="downloadPdfBtn"
+                class="flex items-center space-x-2 bg-green-600 hover:bg-green-700 font-medium py-2 px-3 sm:px-4 rounded-md transition-colors duration-200"
+                style="display:none;" title="Download as PDF">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                    </path>
+                </svg>
+                <span class="hidden sm:inline">PDF</span>
+            </button>
+            <button id="downloadDocxBtn"
+                class="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 font-medium py-2 px-3 sm:px-4 rounded-md transition-colors duration-200"
+                style="display:none;" title="Download as DOCX">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                    </path>
+                </svg>
+                <span class="hidden sm:inline">DOCX</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Responsive Main Content Area -->
+    <main class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+        <!-- Editor Pane -->
+        <section id="editor-pane" class="flex flex-col bg-dark w-full lg:w-1/2 flex-shrink-0">
+            <div
+                class="bg-gray-800 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium text-gray-400 uppercase tracking-wider">
+                Editor</div>
+            <div class="flex-1 min-h-0">
+                <textarea id="latex-editor"></textarea>
+            </div>
+        </section>
+
+        <!-- Resizer (Desktop Only) -->
+        <div id="resizer"
+            class="hidden lg:block w-1 bg-gray-700 hover:bg-accent cursor-col-resize transition-colors duration-200 flex-shrink-0">
+        </div>
+
+        <!-- Output Pane -->
+        <section id="output-pane" class="flex flex-col bg-dark w-full lg:w-1/2 flex-shrink-0">
+            <div
+                class="bg-gray-800 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium text-gray-400 uppercase tracking-wider flex justify-between items-center">
+                <span>Output</span>
+                <button id="toggle-error-log" class="text-xs px-2 py-1 bg-red-900 text-red-300 rounded hover:bg-red-800"
+                    style="display:none;">View Errors</button>
+            </div>
+            <div id="output-container" class="flex-1 p-2 sm:p-4 bg-darker overflow-auto">
+                <p class="text-gray-500">Your compiled PDF will appear here.</p>
+            </div>
+            <!-- Collapsible Error Log -->
+            <div id="error-log" class="h-1/3 bg-red-900/20 border-t border-red-800 overflow-auto flex-shrink-0"
+                style="display: none;">
+                <div class="p-3">
+                    <h3 class="font-bold text-red-400 mb-2">Compilation Error Log:</h3>
+                    <pre id="error-log-content" class="text-xs text-red-300 whitespace-pre-wrap font-mono"></pre>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Status Bar -->
+    <footer
+        class="bg-darker border-t border-gray-800 px-4 py-1 sm:px-6 text-xs text-gray-500 flex justify-between items-center flex-shrink-0">
+        <span id="status">Ready to compile</span>
+        <span>Codexa v1.0</span>
+    </footer>
+
+    <script>
+        // --- CodeMirror Initialization ---
+        const editor = CodeMirror.fromTextArea(document.getElementById('latex-editor'), {
+            lineNumbers: true, mode: 'stex', theme: 'material-ocean',
+        });
+        const defaultLatex = `\\documentclass{article}\n\\usepackage{amsmath}\n\\usepackage{graphicx}\n\\usepackage[utf8]{inputenc}\n\n\\title{Your Title Here}\n\\author{Your Name}\n\\date{\\today}\n\n\\begin{document}\n\n\\maketitle\n\n\\section{Introduction}\nThis is a simple example of a LaTeX document. You can edit this code on the left and click "Compile" to see the result.\n\n\\section{Mathematics}\nLaTeX is great for typesetting mathematics. For example, the quadratic formula is:\n\\[ x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a} \\]\n\nAnd an inline formula looks like this: $E = mc^2$.\n\n\\section{Lists}\n\\begin{itemize}\n    \\item First item\n    \\item Second item\n    \\begin{itemize}\n        \\item A sub-item\n    \\end{itemize}\n    \\item Third item\n\\end{itemize}\n\n\\end{document}`;
+        editor.setValue(defaultLatex);
+
+        // --- DOM Elements ---
+        const compileBtn = document.getElementById('compileBtn');
+        const compileSpinner = document.getElementById('compileSpinner');
+        const downloadPdfBtn = document.getElementById('downloadPdfBtn');
+        const downloadDocxBtn = document.getElementById('downloadDocxBtn');
+        const outputContainer = document.getElementById('output-container');
+        const statusText = document.getElementById('status');
+        const errorLog = document.getElementById('error-log');
+        const errorLogContent = document.getElementById('error-log-content');
+        const toggleErrorLogBtn = document.getElementById('toggle-error-log');
+
+        let currentPdfBlob = null;
+        let currentDocxBlob = null;
+
+        // --- Compilation Function ---
+        async function compileLatex() {
+            compileBtn.disabled = true; compileSpinner.style.display = 'block';
+            compileBtn.querySelector('span').textContent = 'Compiling';
+            statusText.textContent = 'Compiling...'; statusText.className = 'text-yellow-400';
+            outputContainer.innerHTML = '<p class="text-gray-400 animate-pulse">Compiling your document, please wait...</p>';
+            errorLog.style.display = 'none'; toggleErrorLogBtn.style.display = 'none';
+            downloadPdfBtn.style.display = 'none'; downloadDocxBtn.style.display = 'none';
+            currentPdfBlob = null; currentDocxBlob = null;
+
+            const latexCode = editor.getValue();
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/compile/', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code: latexCode }),
+                });
+                const result = await response.json();
+                if (result.success) {
+                    if (result.pdf) {
+                        const binaryString = atob(result.pdf), bytes = new Uint8Array(binaryString.length);
+                        for (let i = 0; i < binaryString.length; i++) bytes[i] = binaryString.charCodeAt(i);
+                        currentPdfBlob = new Blob([bytes], { type: 'application/pdf' });
+                        const pdfUrl = URL.createObjectURL(currentPdfBlob);
+                        outputContainer.innerHTML = `<iframe src="${pdfUrl}" width="100%" height="100%" frameborder="0"></iframe>`;
+                        downloadPdfBtn.style.display = 'flex';
+                    }
+                    if (result.docx) {
+                        const binaryString = atob(result.docx), bytes = new Uint8Array(binaryString.length);
+                        for (let i = 0; i < binaryString.length; i++) bytes[i] = binaryString.charCodeAt(i);
+                        currentDocxBlob = new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+                        downloadDocxBtn.style.display = 'flex';
+                    }
+                    statusText.textContent = 'Compilation successful!'; statusText.className = 'text-green-400';
+                } else {
+                    statusText.textContent = 'Compilation failed.'; statusText.className = 'text-red-400';
+                    outputContainer.innerHTML = `<p class="text-red-400 font-semibold">Compilation failed. Check the error log.</p>`;
+                    errorLogContent.textContent = result.log; toggleErrorLogBtn.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Fetch Error:', error); statusText.textContent = 'Server connection error.'; statusText.className = 'text-red-400';
+                outputContainer.innerHTML = `<p class="text-red-400">Could not connect to the backend. Is it running at <code class="bg-gray-800 px-1 rounded">http://localhost:3000</code>?</p>`;
+            } finally {
+                compileBtn.disabled = false; compileSpinner.style.display = 'none'; compileBtn.querySelector('span').textContent = 'Compile';
+            }
+        }
+
+        // --- Event Listeners ---
+        compileBtn.addEventListener('click', compileLatex);
+        editor.setOption("extraKeys", { "Ctrl-Enter": compileLatex, "Cmd-Enter": compileLatex });
+
+        downloadPdfBtn.addEventListener('click', () => {
+            if (currentPdfBlob) {
+                const link = document.createElement('a'); link.href = URL.createObjectURL(currentPdfBlob); link.download = 'document.pdf'; link.click();
+            }
+        });
+        downloadDocxBtn.addEventListener('click', () => {
+            if (currentDocxBlob) {
+                const link = document.createElement('a'); link.href = URL.createObjectURL(currentDocxBlob); link.download = 'document.docx'; link.click();
+            }
+        });
+
+        toggleErrorLogBtn.addEventListener('click', () => {
+            const isVisible = errorLog.style.display !== 'none';
+            errorLog.style.display = isVisible ? 'none' : 'flex';
+            toggleErrorLogBtn.textContent = isVisible ? 'View Errors' : 'Hide Errors';
+        });
+
+        // --- Resizable Panes Logic (Desktop Only) ---
+        const resizer = document.getElementById('resizer');
+        const editorPane = document.getElementById('editor-pane');
+        const outputPane = document.getElementById('output-pane');
+
+        if (window.getComputedStyle(resizer).display !== 'none') {
+            let isResizing = false;
+            resizer.addEventListener('mousedown', (e) => { isResizing = true; document.body.style.cursor = 'col-resize'; });
+            document.addEventListener('mousemove', (e) => {
+                if (!isResizing) return;
+                const containerOffsetLeft = editorPane.parentElement.offsetLeft;
+                const pointerRelativeXpos = e.clientX - containerOffsetLeft;
+                const newEditorWidth = (pointerRelativeXpos / editorPane.parentElement.offsetWidth) * 100;
+                if (newEditorWidth > 20 && newEditorWidth < 80) {
+                    editorPane.style.width = `${newEditorWidth}%`; outputPane.style.width = `${100 - newEditorWidth}%`;
+                }
+            });
+            document.addEventListener('mouseup', () => { isResizing = false; document.body.style.cursor = 'default'; });
+        }
+    </script>
+</body>
+
+</html>

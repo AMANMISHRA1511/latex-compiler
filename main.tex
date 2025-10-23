@@ -1,0 +1,60 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{xcolor}
+\usepackage[many]{tcolorbox}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+\begin{document}
+
+% Name
+\begin{center}
+    {\Huge \textbf{\textcolor{red}{Jon Snow}}}
+\end{center}
+
+% Title box
+\begin{tcolorbox}[colframe=white,colback=red!75!green!50,arc=3pt,boxrule=0pt]
+    King of the North
+\end{tcolorbox}
+
+\vspace{0.5cm}
+
+% Two-column layout
+\noindent
+\begin{minipage}[t]{0.3\textwidth}
+    \textcolor{red}{\section*{Profile}} 
+    I kill dead people.
+
+    \textcolor{red}{\section*{Interests}} 
+    \begin{itemize}
+        \item Birdwatching
+        \item Sitting
+        \item Resurrecting
+    \end{itemize}
+
+    \textcolor{red}{\section*{Contacts}}
+    \textbf{Phone:} +10123456789 \\
+    \textbf{Email:} iknownothong@nord.denny \\
+    \textbf{LinkedIn:} www.linkedin.com/in/TheKingOfTheNord-3543841ab \\
+    \textbf{Address:} The Great Wall
+\end{minipage}%
+\hspace{1cm}\vrule\hspace{1cm}%
+\begin{minipage}[t]{0.6\textwidth}
+    \textcolor{red}{\section*{Education}}
+    \textbf{The Great Wall School} \hfill 298A.C -- 304A.C \\
+    Lord Commander 303--304 \\
+    Member of the Night's Watch 298--303
+
+    \textcolor{red}{\section*{Experience}}
+    \textbf{Battle of the Bastards} \hfill 303 \\
+    Fought and won the battle.
+
+    \textcolor{red}{\section*{Skills}}
+    \begin{itemize}
+        \item Close combat
+        \item Riding dragons
+        \item Friend of giants
+    \end{itemize}
+\end{minipage}
+
+\end{document}
