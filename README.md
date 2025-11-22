@@ -1,5 +1,4 @@
 # latex-compiler
-# Codexa - Modern LaTeX Compiler
 
 ![Codexa Logo](https://i.ibb.co/68v8zPn/codexa-logo.png)
 
